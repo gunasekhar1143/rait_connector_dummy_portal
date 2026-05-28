@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}RAIT Dummy Portal{% endblock %}</title>
+  <link rel="stylesheet" href="/static/css/dashboard.css">
+</head>
+<body>
+  <header class="page-header">
+    <div>
+      <h1><a href="/" style="color:inherit">RAIT Dummy Portal</a></h1>
+      <div class="subtitle">Phase 3 PoC — Responsible AI Testing</div>
+    </div>
+    {% block header_right %}{% endblock %}
+  </header>
+
+  <main class="container">
+    {% block content %}{% endblock %}
+  </main>
+
+  {% block scripts %}{% endblock %}
+</body>
+</html>

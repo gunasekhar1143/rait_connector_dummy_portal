@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block title %}Record #{{ record.record_id }} — RAIT Dummy Portal{% endblock %}
+
+{% block content %}
+<a class="back-link" href="/">← Back to dashboard</a>
+
+<!-- ── Record metadata ────────────────────────────────────────────────── -->
+<div class="detail-card">
+  <p class="section-title" style="margin-bottom:1rem">
+    Record #{{ record.record_id }}
+    <span class="log-type-chip" style="margin-left:.5rem">{{ record.log_type }}</span>
+  </p>
+
+  <div class="detail-grid">
+    <div>
+      <div class="detail-label">Model</div>
+      <div class="detail-value">{{ record.model_name }} {{ record.model_version }}</div>
+    </div>
+    <div>
+      <div class="detail-label">Environment</div>
+      <div class="detail-value">{{ record.model_environment }}</div>
+    </div>
+    <div>
+      <div class="detail-label">Purpose</div>
+      <div class="detail-value">{{ record.model_purpose }}</div>
+    </div>
+    <div>
+      <div class="detail-label">Log Generated</div>
+      <div class="detail-value">{{ record.log_generated_at }}</div>
+    </div>
+    <div>
+      <div class="detail-label">Received At</div>
+      <div class="detail-value">{{ record.received_at }}</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Evaluation dimensions ──────────────────────────────────────────── -->
+{% if record.log_type == "evaluation" and record.decrypted_payload %}
+{% set dims = record.decrypted_payload.get("ethical_dimensions", []) %}
+{% if dims %}
+<div class="detail-card">
+  <p class="section-title" style="margin-bottom:1rem">Ethical Dimension Scores</p>
+  {% for dim in dims %}
+  <div style="margin-bottom:1.25rem">
+    <div style="font-weight:600; margin-bottom:.4rem">{{ dim.dimension_name }}</div>
+    <div class="records-table-wrap">
+      <table>
+        <thead>
+          <tr><th>Metric</th><th>Score</th><th>Metadata</th></tr>
+        </thead>
+        <tbody>
+          {% for metric in dim.dimension_metrics %}
+          <tr>
+            <td>{{ metric.metric_name }}</td>
+            <td>
+              {% set meta = metric.get("metric_metadata", {}) %}
+              {% if meta.get("score") is not none %}
+                <strong>{{ "%.2f"|format(meta.score) }}</strong>
+              {% else %}—{% endif %}
+            </td>
+            <td style="font-size:0.75rem; color:#7f8c8d">
+              {{ metric.get("metric_metadata", {}) | tojson }}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+{% endif %}
+
+<!-- ── Raw decrypted payload ──────────────────────────────────────────── -->
+{% if record.decrypted_payload %}
+<div class="detail-card">
+  <details>
+    <summary>Raw Decrypted Payload</summary>
+    <pre class="log-block">{{ record.decrypted_payload | tojson(indent=2) }}</pre>
+  </details>
+</div>
+{% endif %}
+
+<!-- ── Connector logs ──────────────────────────────────────────────────── -->
+{% if record.connector_logs %}
+<div class="detail-card">
+  <details>
+    <summary>Connector Logs</summary>
+    <pre class="log-block">{{ record.connector_logs }}</pre>
+  </details>
+</div>
+{% endif %}
+{% endblock %}

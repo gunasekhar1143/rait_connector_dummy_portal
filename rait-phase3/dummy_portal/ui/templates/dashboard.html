@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard — RAIT Dummy Portal{% endblock %}
+
+{% block header_right %}
+  <span id="refresh-status" aria-live="polite">Auto-refresh every 10s</span>
+{% endblock %}
+
+{% block content %}
+<!-- ── Ethical Dimensions ──────────────────────────────────────────────── -->
+<p class="section-title">Ethical Dimensions</p>
+
+<div class="dimension-grid">
+  {# Iterate over dimensions from DB — no hardcoded names or count #}
+  {% for dim in dimensions %}
+  <article
+    class="dimension-card {{ 'safe' if dim.is_safe else 'unsafe' }}"
+    data-dimension-id="{{ dim.dimension_id }}"
+    aria-label="Dimension: {{ dim.dimension_name }}"
+  >
+    <div class="card-name">{{ dim.dimension_name }}</div>
+    <div class="card-score">{{ "%.1f"|format(dim.avg_score / 5 * 100) }}%</div>
+    <div class="card-meta">
+      <span
+        class="badge {{ 'safe' if dim.is_safe else 'unsafe' }}"
+        aria-label="{{ 'Safe' if dim.is_safe else 'Unsafe' }}"
+      >{{ 'Safe' if dim.is_safe else 'Unsafe' }}</span>
+      <span class="card-strategy">{{ dim.aggregation_strategy }}</span>
+      <span class="card-samples">{{ dim.sample_count }} sample{{ 's' if dim.sample_count != 1 else '' }}</span>
+    </div>
+  </article>
+  {% else %}
+  <p style="color:#95a5a6; grid-column: 1/-1;">
+    No dimension data yet. Run the evaluation driver script to populate scores.
+  </p>
+  {% endfor %}
+</div>
+
+<!-- ── Recent Records ────────────────────────────────────────────────── -->
+<p class="section-title">Recent Ingest Records <small style="font-weight:normal;text-transform:none">(last 20)</small></p>
+
+<div class="records-table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Model</th>
+        <th>Type</th>
+        <th>Environment</th>
+        <th>Received</th>
+      </tr>
+    </thead>
+    <tbody id="records-tbody">
+      {% for rec in records %}
+      <tr>
+        <td><a href="/records/{{ rec.record_id }}">#{{ rec.record_id }}</a></td>
+        <td>{{ rec.model_name }} <span style="color:#95a5a6">{{ rec.model_version }}</span></td>
+        <td><span class="log-type-chip">{{ rec.log_type }}</span></td>
+        <td>{{ rec.model_environment }}</td>
+        <td>{{ rec.received_at }}</td>
+      </tr>
+      {% else %}
+      <tr><td colspan="5" style="color:#95a5a6; text-align:center; padding:2rem">
+        No records yet — run the evaluation driver to send payloads.
+      </td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/dashboard.js"></script>
+{% endblock %}

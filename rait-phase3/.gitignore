@@ -1,0 +1,8 @@
+.env
+keys/rsa_private.pem
+__pycache__/
+*.pyc
+*.db
+.pytest_cache/
+dist/
+*.egg-info/
