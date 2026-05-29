@@ -1,3 +1,9 @@
+---
+description: Run an end-to-end RSA encryption roundtrip validation for a RAIT encryptor class. Pass the class name (Encryptor or EncryptorV2) and the plaintext string to test.
+argument-hint: "<EncryptorClass> \"<plaintext-string>\""
+allowed-tools: Bash, Read
+---
+
 Run an encryption roundtrip validation:
 
 $ARGUMENTS

@@ -1,3 +1,9 @@
+---
+description: Scaffold a complete FastAPI router file following RAIT project conventions. Pass the path prefix, purpose, and each endpoint's method/path/request/response description.
+argument-hint: "<path-prefix> <purpose> [endpoint descriptions...]"
+allowed-tools: Write, Read, Glob
+---
+
 Generate a complete FastAPI router file based on this specification:
 
 $ARGUMENTS

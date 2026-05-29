@@ -1,3 +1,9 @@
+---
+description: Scaffold a Jinja2 dashboard template, vanilla JS polling, and CSS for a RAIT portal module. Pass the module name and any extra data fields it should display.
+argument-hint: "<module-name> [extra field descriptions]"
+allowed-tools: Write, Read, Glob
+---
+
 Generate a Jinja2 HTML dashboard template and accompanying static assets for:
 
 $ARGUMENTS

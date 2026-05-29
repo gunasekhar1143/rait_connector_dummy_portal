@@ -1,3 +1,9 @@
+---
+description: Generate idempotent SQLite schema DDL and async Python seeding code for RAIT database tables. Pass table names with columns, types, constraints, and optional seed rows.
+argument-hint: "<table-name> <columns and constraints> [seed data]"
+allowed-tools: Write, Read, Bash
+---
+
 Generate complete SQLite schema and seeding code for:
 
 $ARGUMENTS

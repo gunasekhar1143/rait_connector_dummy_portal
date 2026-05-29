@@ -1,3 +1,9 @@
+---
+description: Run API contract tests against a live RAIT service using httpx. Pass the base URL and a list of endpoints with their expected HTTP status codes and schema names.
+argument-hint: "<base-url> <endpoint list with expected statuses>"
+allowed-tools: Bash, Read
+---
+
 Test API contracts for the specified running service:
 
 $ARGUMENTS

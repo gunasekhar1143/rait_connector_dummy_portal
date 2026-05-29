@@ -1,3 +1,9 @@
+---
+description: Generate a rait_connector driver script with correct dotenv import ordering and EncryptorV2 patching. Pass the operation to perform (e.g. "ingest records", "check scheduler status").
+argument-hint: "<operation description> [--no-encrypt]"
+allowed-tools: Write, Read, Bash
+---
+
 Generate a rait_connector driver script for:
 
 $ARGUMENTS
