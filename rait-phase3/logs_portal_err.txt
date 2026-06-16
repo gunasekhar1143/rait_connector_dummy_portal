@@ -1,0 +1,84 @@
+INFO:     Started server process [43680]
+INFO:     Waiting for application startup.
+INFO:dummy_portal.ml.classifier:
++===================================================+
+  Metric : Hate and Unfairness (Azure)
++===================================================+
+  Dataset   : 198 samples  |  72 FAIL  |  126 PASS
+  Sigmoid   : P(FAIL) = sigmoid(0.2479 * score + -1.1403)
+              [sigmoid(z) = 1 / (1 + e^(-z))]
+  CV Folds  : 5-fold stratified
+  Threshold : 0.336  (F1-optimal via precision_recall_curve)
+----------------------------------------------------
+  Baseline F1 (score-threshold rule) : 0.541
+  LR F1       (OOF, thr=0.336)      : 0.583
+  ROC-AUC                             : 0.573
+----------------------------------------------------
+  Confusion Matrix (OOF, thr=0.336)
+              Pred FAIL   Pred PASS
+  True FAIL     TP=  51      FN=  21
+  True PASS     FP=  52      TN=  74
+----------------------------------------------------
+  Precision : 0.495
+  Recall    : 0.708
+  F1 Score  : 0.583
+  Accuracy  : 0.631
++===================================================+
+INFO:dummy_portal.ml.classifier:
++===================================================+
+  Metric : Coherence (Azure)
++===================================================+
+  Dataset   : 200 samples  |  70 FAIL  |  130 PASS
+  Sigmoid   : P(FAIL) = sigmoid(-0.7479 * score + 1.1972)
+              [sigmoid(z) = 1 / (1 + e^(-z))]
+  CV Folds  : 5-fold stratified
+  Threshold : 0.415  (F1-optimal via precision_recall_curve)
+----------------------------------------------------
+  Baseline F1 (score-threshold rule) : 0.550
+  LR F1       (OOF, thr=0.415)      : 0.550
+  ROC-AUC                             : 0.620
+----------------------------------------------------
+  Confusion Matrix (OOF, thr=0.415)
+              Pred FAIL   Pred PASS
+  True FAIL     TP=  47      FN=  23
+  True PASS     FP=  54      TN=  76
+----------------------------------------------------
+  Precision : 0.465
+  Recall    : 0.671
+  F1 Score  : 0.550
+  Accuracy  : 0.615
++===================================================+
+INFO:dummy_portal.telemetry_setup:OpenTelemetry tracing enabled (exporter=console)
+INFO:src.services.evaluation_service:EvaluationService: stub mode (no Azure credentials)
+INFO:dummy_portal.main:Phase 2 services started (ModernRAITClient + CalibrationScheduler + TelemetryService)
+INFO:dummy_portal.main:Dummy Portal started — DB: dummy_portal/portal.db
+INFO:src.services.calibration_scheduler:Calibration cycle started run_id=8db18f9b-67b6-4780-8dc1-7ab65c942c40
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:httpx:HTTP Request: POST http://localhost:8001/api/model-registry/token/ "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8001/api/model-registry/token/ "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8001/api/model-registry/public-key/ "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8001/api/model-registry/public-key/ "HTTP/1.1 200 OK"
+INFO:dummy_portal.services.ingest_service:Stored ingest record #2370 log_type=telemetry key=49155ce2-e3e5-4c9e-a884-d01daa98e7af
+INFO:httpx:HTTP Request: PUT http://localhost:8000/v1/demo-client/gpt-4o-poc%202024-08-06%20%28development%29/20260614T101138/49155ce2-e3e5-4c9e-a884-d01daa98e7af "HTTP/1.1 200 OK"
+INFO:src.services.telemetry_service:{"event": "telemetry_sync", "batch_size": 1, "stub_mode": True}
+INFO:httpx:HTTP Request: GET http://localhost:8001/api/calibrator/calibration-run-prompts/ "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://localhost:8001/api/model-registry/enabled-metrics/ "HTTP/1.1 200 OK"
+INFO:src.services.calibration_scheduler:Fetched 50 prompts, 3 metrics (registry_run_id=f67101cb-9488-4db8-947b-60f9d47eb699)
+INFO:httpx:HTTP Request: POST http://localhost:8001/api/calibrator/update-prompts-response/ "HTTP/1.1 200 OK"
+INFO:dummy_portal.services.ingest_service:Stored ingest record #2371 log_type=calibration key=a569504b-e8da-40a1-947e-822fea1e542f
+INFO:httpx:HTTP Request: PUT http://localhost:8000/v1/demo-client/gpt-4o-poc%202024-08-06%20%28development%29/20260614T101140/a569504b-e8da-40a1-947e-822fea1e542f "HTTP/1.1 200 OK"
+INFO:src.services.calibration_scheduler:Calibration cycle complete run_id=8db18f9b-67b6-4780-8dc1-7ab65c942c40 — 50 responses, 3 metrics each
+INFO:src.services.calibration_scheduler:Scheduled calibration complete run_id=8db18f9b-67b6-4780-8dc1-7ab65c942c40
+INFO:httpx:HTTP Request: GET http://localhost:8001/api/model-registry/enabled-metrics/ "HTTP/1.1 200 OK"
+INFO:dummy_portal.services.ingest_service:Stored ingest record #2372 log_type=evaluation key=be0d52fa-aa47-4190-a156-65ed3bcd8d89
+INFO:httpx:HTTP Request: PUT http://localhost:8000/v1/demo-client/gpt-4o-poc%202024-08-06%20%28development%29/20260614T101206/be0d52fa-aa47-4190-a156-65ed3bcd8d89 "HTTP/1.1 200 OK"
+INFO:src.services.evaluation_service:Evaluated prompt_id=gp-med-raw-001 — 3 metrics across 3 dimensions
+INFO:httpx:HTTP Request: GET http://localhost:8001/api/model-registry/enabled-metrics/ "HTTP/1.1 200 OK"
+INFO:dummy_portal.services.ingest_service:Stored ingest record #2373 log_type=evaluation key=8eef27e5-a447-4b4f-89b0-88a5a393fae1
+INFO:httpx:HTTP Request: PUT http://localhost:8000/v1/demo-client/gpt-4o-poc%202024-08-06%20%28development%29/20260614T110107/8eef27e5-a447-4b4f-89b0-88a5a393fae1 "HTTP/1.1 200 OK"
+INFO:src.services.evaluation_service:Evaluated prompt_id=gp-med-check-001 — 3 metrics across 3 dimensions
+INFO:httpx:HTTP Request: GET http://localhost:8001/api/model-registry/enabled-metrics/ "HTTP/1.1 200 OK"
+INFO:dummy_portal.services.ingest_service:Stored ingest record #2374 log_type=evaluation key=23196648-0285-46b3-87ad-4a2deff3d39d
+INFO:httpx:HTTP Request: PUT http://localhost:8000/v1/demo-client/gpt-4o-poc%202024-08-06%20%28development%29/20260614T110136/23196648-0285-46b3-87ad-4a2deff3d39d "HTTP/1.1 200 OK"
+INFO:src.services.evaluation_service:Evaluated prompt_id=gp-sec-check-001 — 3 metrics across 3 dimensions

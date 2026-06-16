@@ -1,4 +1,4 @@
-"""Router for PUT /v1/{key:path}: receives encrypted evaluation/telemetry/calibration payloads."""
+"""Router for PUT /v1/{key}: receives encrypted evaluation/telemetry/calibration payloads."""
 import logging
 
 import aiosqlite
@@ -22,7 +22,7 @@ async def ingest(
     db: aiosqlite.Connection = Depends(db_dependency),
 ) -> IngestResponse:
     tracer = get_tracer()
-    key_suffix = key.split("/")[-1]   # last UUID segment — safe to log
+    key_suffix = key.split("/")[-1]
 
     with tracer.start_as_current_span("ingest.receive") as span:
         span.set_attribute("model_name", payload.model_name)
@@ -30,7 +30,8 @@ async def ingest(
         span.set_attribute("key_suffix", key_suffix)
 
         engine = get_decryption_engine(request)
-        service = IngestService(db=db, engine=engine)
+        classifier = getattr(request.app.state, "metric_classifier", None)
+        service = IngestService(db=db, engine=engine, classifier=classifier)
 
         try:
             with tracer.start_as_current_span("ingest.decrypt") as decrypt_span:

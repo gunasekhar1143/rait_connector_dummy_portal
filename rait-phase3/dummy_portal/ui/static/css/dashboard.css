@@ -36,6 +36,69 @@ a:hover { text-decoration: underline; }
   margin-bottom: 0.75rem;
 }
 
+/* ── Evaluate panel ──────────────────────────────────────────────────── */
+.evaluate-panel {
+  background: #fff;
+  border-radius: 8px;
+  padding: 1.25rem 1.5rem;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  margin-bottom: 2rem;
+}
+
+.eval-textarea {
+  width: 100%;
+  border: 1px solid #dde2e8;
+  border-radius: 6px;
+  padding: 0.75rem;
+  font-size: 0.875rem;
+  resize: vertical;
+  font-family: inherit;
+  color: #2c3e50;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.eval-textarea:focus { border-color: #3498db; }
+
+.eval-btn {
+  margin-top: 0.75rem;
+  padding: 0.6rem 1.4rem;
+  background: #3498db;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.eval-btn:hover:not(:disabled) { background: #2980b9; }
+.eval-btn:disabled { background: #95a5a6; cursor: not-allowed; }
+
+.eval-result {
+  margin-top: 1rem;
+  padding: 1rem 1.25rem;
+  background: #f8f9fa;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  border: 1px solid #ecf0f1;
+}
+
+.eval-dim-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.35rem 0;
+  border-bottom: 1px solid #ecf0f1;
+}
+.eval-dim-row:last-child { border-bottom: none; }
+
+.eval-dim-name { min-width: 200px; font-weight: 600; color: #2c3e50; font-size: 0.82rem; }
+
+.eval-dim-bar-wrap { flex: 1; background: #ecf0f1; border-radius: 3px; height: 8px; }
+.eval-dim-bar      { height: 8px; border-radius: 3px; background: #3498db; transition: width 0.4s; }
+
+.eval-dim-score { font-weight: 700; min-width: 65px; text-align: right; color: #2c3e50; font-size: 0.82rem; }
+
 /* ── Dimension cards ─────────────────────────────────────────────────── */
 .dimension-grid {
   display: grid;
@@ -55,39 +118,100 @@ article.dimension-card {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  border-left: 4px solid #bdc3c7;
-  transition: border-color 0.3s;
 }
 
-article.dimension-card.safe   { border-left-color: #2ecc71; }
-article.dimension-card.unsafe { border-left-color: #e74c3c; }
+/* Safety banner — dominant visual element replacing the left border */
+.card-banner {
+  border-radius: 4px;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-align: center;
+}
+
+article.dimension-card.safe   .card-banner { background: #2ecc71; color: #fff; }
+article.dimension-card.unsafe .card-banner { background: #e74c3c; color: #fff; }
+article.dimension-card.nodata .card-banner { background: #bdc3c7; color: #fff; }
 
 .card-name {
   font-weight: 600;
   font-size: 0.95rem;
   color: #2c3e50;
+  margin-top: 0.25rem;
 }
 
-.card-score {
-  font-size: 2rem;
+.card-score-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-top: 0.25rem;
+}
+
+.card-score-val {
+  font-size: 1.15rem;
   font-weight: 700;
   color: #2c3e50;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
 }
+
+.card-score-minmax {
+  font-size: 0.7rem;
+  color: #95a5a6;
+}
+
+.card-progress-wrap {
+  height: 6px;
+  background: #ecf0f1;
+  border-radius: 3px;
+  margin: 0.2rem 0;
+}
+
+.card-progress-bar {
+  height: 6px;
+  border-radius: 3px;
+  background: #3498db;
+  transition: width 0.4s;
+}
+
+article.dimension-card.unsafe .card-progress-bar { background: #e74c3c; }
 
 .card-meta {
   display: flex;
   align-items: center;
   gap: 0.5rem;
   flex-wrap: wrap;
+  margin-top: 0.25rem;
 }
 
+/* Tooltip for aggregation strategy */
 .card-strategy {
   font-size: 0.72rem;
   color: #95a5a6;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
+  cursor: help;
+  position: relative;
 }
+
+.card-strategy::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 130%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #2c3e50;
+  color: #fff;
+  font-size: 0.7rem;
+  padding: 0.35rem 0.6rem;
+  border-radius: 4px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+  z-index: 10;
+}
+
+.card-strategy:hover::after { opacity: 1; }
 
 .card-samples {
   font-size: 0.72rem;
@@ -211,3 +335,16 @@ pre.log-block {
 
 /* ── Back link ───────────────────────────────────────────────────────── */
 .back-link { font-size: 0.85rem; margin-bottom: 1rem; display: inline-block; }
+
+/* ── LR Prediction badges ────────────────────────────────────────────── */
+.pf-badge {
+  display: inline-block;
+  padding: .2em .55em;
+  border-radius: 4px;
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.pf-pass { background: #2ecc71; color: #fff; }
+.pf-fail { background: #e74c3c; color: #fff; }

@@ -15,15 +15,15 @@
   <div class="detail-grid">
     <div>
       <div class="detail-label">Model</div>
-      <div class="detail-value">{{ record.model_name }} {{ record.model_version }}</div>
+      <div class="detail-value">{{ record.model_name }} <span style="color:#95a5a6">{{ record.model_version }}</span></div>
     </div>
     <div>
       <div class="detail-label">Environment</div>
-      <div class="detail-value">{{ record.model_environment }}</div>
+      <div class="detail-value">{{ record.model_environment or "—" }}</div>
     </div>
     <div>
       <div class="detail-label">Purpose</div>
-      <div class="detail-value">{{ record.model_purpose }}</div>
+      <div class="detail-value">{{ record.model_purpose or "—" }}</div>
     </div>
     <div>
       <div class="detail-label">Log Generated</div>
@@ -33,36 +33,102 @@
       <div class="detail-label">Received At</div>
       <div class="detail-value">{{ record.received_at }}</div>
     </div>
+    {% if record.decrypted_payload %}
+    {% set _p = record.decrypted_payload %}
+    {% if _p.get("prompt_id") %}
+    <div>
+      <div class="detail-label">Prompt ID</div>
+      <div class="detail-value" style="word-break:break-all">{{ _p.get("prompt_id") }}</div>
+    </div>
+    {% endif %}
+    {% if _p.get("prompt_url") %}
+    <div>
+      <div class="detail-label">Prompt URL</div>
+      <div class="detail-value"><a href="{{ _p.get('prompt_url') }}" target="_blank">{{ _p.get("prompt_url") }}</a></div>
+    </div>
+    {% endif %}
+    {% if _p.get("calibration_run_id") %}
+    <div>
+      <div class="detail-label">Calibration Run</div>
+      <div class="detail-value" style="word-break:break-all">{{ _p.get("calibration_run_id") }}</div>
+    </div>
+    {% endif %}
+    <div>
+      <div class="detail-label">For Calibration</div>
+      <div class="detail-value">{{ "Yes" if _p.get("for_calibration") else "No" }}</div>
+    </div>
+    {% endif %}
   </div>
 </div>
 
-<!-- ── Evaluation dimensions ──────────────────────────────────────────── -->
+<!-- ── Query / Response (evaluation records) ─────────────────────────── -->
 {% if record.log_type == "evaluation" and record.decrypted_payload %}
-{% set dims = record.decrypted_payload.get("ethical_dimensions", []) %}
+{% set _p = record.decrypted_payload %}
+{% if _p.get("query") %}
+<div class="detail-card">
+  <p class="section-title" style="margin-bottom:.75rem">Query &amp; Response</p>
+  <div style="margin-bottom:1.25rem">
+    <div class="detail-label" style="margin-bottom:.35rem">Query</div>
+    <div style="background:#f8f9fa;border-radius:6px;padding:.75rem 1rem;font-size:.88rem;line-height:1.6;color:#2c3e50;border-left:3px solid #3498db">
+      {{ _p.get("query") }}
+    </div>
+  </div>
+  {% if _p.get("response") %}
+  <div style="margin-bottom:1rem">
+    <div class="detail-label" style="margin-bottom:.35rem">Generated Response</div>
+    <div style="background:#f8f9fa;border-radius:6px;padding:.75rem 1rem;font-size:.88rem;line-height:1.6;color:#2c3e50;border-left:3px solid #2ecc71">
+      {{ _p.get("response") }}
+    </div>
+  </div>
+  {% endif %}
+  {% if _p.get("ground_truth") %}
+  <div>
+    <div class="detail-label" style="margin-bottom:.35rem">Ground Truth</div>
+    <div style="background:#f8f9fa;border-radius:6px;padding:.75rem 1rem;font-size:.88rem;line-height:1.6;color:#2c3e50">
+      {{ _p.get("ground_truth") }}
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endif %}
+
+<!-- ── Ethical dimension scores ───────────────────────────────────────── -->
+{% set dims = _p.get("ethical_dimensions", []) %}
 {% if dims %}
 <div class="detail-card">
   <p class="section-title" style="margin-bottom:1rem">Ethical Dimension Scores</p>
   {% for dim in dims %}
-  <div style="margin-bottom:1.25rem">
-    <div style="font-weight:600; margin-bottom:.4rem">{{ dim.dimension_name }}</div>
+  <div style="margin-bottom:1.5rem">
+    <div style="font-weight:600;font-size:.95rem;margin-bottom:.5rem;color:#2c3e50">{{ dim.dimension_name }}</div>
     <div class="records-table-wrap">
       <table>
         <thead>
-          <tr><th>Metric</th><th>Score</th><th>Metadata</th></tr>
+          <tr><th>Metric</th><th style="width:90px">Score</th><th style="width:110px">Prediction</th><th>Full Metadata</th></tr>
         </thead>
         <tbody>
           {% for metric in dim.dimension_metrics %}
+          {% set meta = metric.get("metric_metadata", {}) %}
+          {% set score = meta.get("score") %}
           <tr>
             <td>{{ metric.metric_name }}</td>
             <td>
-              {% set meta = metric.get("metric_metadata", {}) %}
-              {% if meta.get("score") is not none %}
-                <strong>{{ "%.2f"|format(meta.score) }}</strong>
+              {% if score is not none %}
+              <strong style="font-size:1rem">{{ "%.2f"|format(score) }}</strong>
+              <span style="color:#95a5a6;font-size:.75rem"> / 5.0</span>
               {% else %}—{% endif %}
             </td>
-            <td style="font-size:0.75rem; color:#7f8c8d">
-              {{ metric.get("metric_metadata", {}) | tojson }}
+            <td>
+              {% set pred = metric.get("prediction") %}
+              {% if pred and pred.get("label") not in (none, "N/A") %}
+              <span class="pf-badge {% if pred.get('label') == 'PASS' %}pf-pass{% else %}pf-fail{% endif %}">
+                {{ pred.get("label") }}
+              </span>
+              <span style="font-size:.7rem;color:#95a5a6;display:block;margin-top:2px">
+                {{ "%.0f"|format(pred.get("probability", 0) * 100) }}%
+              </span>
+              {% else %}—{% endif %}
             </td>
+            <td style="font-size:.75rem;color:#7f8c8d">{{ meta | tojson }}</td>
           </tr>
           {% endfor %}
         </tbody>
@@ -70,6 +136,62 @@
     </div>
   </div>
   {% endfor %}
+</div>
+{% endif %}
+{% endif %}
+
+<!-- ── Telemetry detail ───────────────────────────────────────────────── -->
+{% if record.log_type == "telemetry" and record.decrypted_payload %}
+{% set _p = record.decrypted_payload %}
+<div class="detail-card">
+  <p class="section-title" style="margin-bottom:1rem">Telemetry Data</p>
+  {% if _p.get("app_dependencies") %}
+  <div style="margin-bottom:1rem">
+    <div class="detail-label" style="margin-bottom:.35rem">App Dependencies</div>
+    <div class="records-table-wrap">
+      <table>
+        <thead><tr><th>Name</th><th>Duration (ms)</th></tr></thead>
+        <tbody>
+          {% for dep in _p.get("app_dependencies", []) %}
+          <tr><td>{{ dep.name }}</td><td>{{ dep.duration }}</td></tr>
+          {% else %}
+          <tr><td colspan="2" style="color:#95a5a6">None</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% endif %}
+  {% if _p.get("app_exceptions") %}
+  <div class="detail-label" style="margin-bottom:.35rem">Exceptions</div>
+  <pre class="log-block">{{ _p.get("app_exceptions") | tojson(indent=2) }}</pre>
+  {% endif %}
+</div>
+{% endif %}
+
+<!-- ── Calibration detail ─────────────────────────────────────────────── -->
+{% if record.log_type == "calibration" and record.decrypted_payload %}
+{% set _p = record.decrypted_payload %}
+{% set responses = _p.get("calibration_responses", []) %}
+{% if responses %}
+<div class="detail-card">
+  <p class="section-title" style="margin-bottom:1rem">Calibration Responses ({{ responses | length }})</p>
+  <div class="records-table-wrap">
+    <table>
+      <thead><tr><th>Prompt ID</th><th>Response</th></tr></thead>
+      <tbody>
+        {% for r in responses[:10] %}
+        <tr>
+          <td style="white-space:nowrap">{{ r.get("prompt_id","—") }}</td>
+          <td style="font-size:.8rem">{{ r.get("response_text", r.get("response","—"))[:120] }}{% if r.get("response_text","") | length > 120 %}…{% endif %}</td>
+        </tr>
+        {% endfor %}
+        {% if responses | length > 10 %}
+        <tr><td colspan="2" style="color:#95a5a6;text-align:center">… and {{ responses | length - 10 }} more</td></tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
 </div>
 {% endif %}
 {% endif %}

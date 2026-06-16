@@ -18,6 +18,10 @@ dependencies = [
     "python-dotenv>=1.0",
     # Crypto
     "cryptography>=42",
+    # ML
+    "scikit-learn>=1.3",
+    "numpy>=1.24",
+    "pandas>=2.0",
     # HTTP (driver scripts)
     "httpx>=0.27",
     "requests>=2.32",

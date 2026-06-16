@@ -61,11 +61,43 @@ class QueryService:
                 payload = json.loads(r["decrypted_payload"])
             except (json.JSONDecodeError, TypeError):
                 payload = None
+
+        # For evaluation records, supplement decrypted_payload with fields
+        # stored in evaluation_results (query, response, ground_truth, context,
+        # prompt_url, post_response). These are populated by _store_evaluation
+        # and may be present even when decrypted_payload is missing them.
+        if r["log_type"] == "evaluation":
+            er_rows = await self._db.execute_fetchall(
+                """SELECT prompt_id, prompt_url, query, response,
+                          ground_truth, context, post_response
+                   FROM evaluation_results WHERE record_id=?""",
+                [record_id],
+            )
+            if er_rows:
+                er = er_rows[0]
+                if payload is None:
+                    payload = {}
+                # Fill in any field that decrypted_payload is missing or blank
+                for field in ("prompt_id", "prompt_url", "query", "response",
+                               "ground_truth", "context"):
+                    if not payload.get(field) and er[field]:
+                        payload[field] = er[field]
+                # Merge post_response (prompt_response_id, calibration_run_id)
+                if er["post_response"] and not payload.get("prompt_response_id"):
+                    try:
+                        pr = json.loads(er["post_response"])
+                        for key in ("prompt_response_id", "calibration_run_id"):
+                            if not payload.get(key) and pr.get(key):
+                                payload[key] = pr[key]
+                    except (json.JSONDecodeError, TypeError):
+                        pass
+
         return RecordDetail(
             record_id=r["id"],
             model_name=r["model_name"],
             model_version=r["model_version"],
             model_environment=r["model_environment"],
+            model_purpose=r["model_purpose"] or "",
             log_type=r["log_type"],
             log_generated_at=r["log_generated_at"],
             received_at=r["received_at"],

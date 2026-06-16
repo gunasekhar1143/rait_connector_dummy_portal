@@ -1,8 +1,9 @@
-"""Tests for PUT /v1/{key:path}: real connector-encrypted payloads, all log_types, error paths."""
+"""Tests for PUT /v1/{key}: real connector-encrypted payloads, all log_types, error paths."""
 import base64
 import json
 import sqlite3
 import sys
+import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -21,6 +22,11 @@ from rait_connector_patches.encryptor_v2 import EncryptorV2
 
 def _make_encrypted_payload(data: dict, enc: Encryptor) -> str:
     return base64.b64encode(enc.encrypt(json.dumps(data))).decode()
+
+
+def _ingest_url(body: dict) -> str:
+    """Build a /v1/{key} URL from ingest body fields, matching the connector format."""
+    return f"/v1/{body['model_name']}/{body['model_version']}/{uuid.uuid4()}"
 
 
 def _make_ingest_body(log_type: str, data: dict, enc: Encryptor) -> dict:
@@ -89,7 +95,7 @@ class TestEvaluationIngest:
     def test_v1_evaluation_returns_accepted(self, portal_client, v1_encryptor):
         client, _ = portal_client
         body = _make_ingest_body("evaluation", self._EVAL_DATA, v1_encryptor)
-        resp = client.put("/v1/demo-client/gpt-4o-test/20250101T000000/uuid-001", json=body)
+        resp = client.put(_ingest_url(body), json=body)
         assert resp.status_code == 200
         assert resp.json()["status"] == "accepted"
         assert isinstance(resp.json()["record_id"], int)
@@ -97,14 +103,14 @@ class TestEvaluationIngest:
     def test_v2_evaluation_returns_accepted(self, portal_client, v2_encryptor):
         client, _ = portal_client
         body = _make_ingest_body("evaluation", self._EVAL_DATA, v2_encryptor)
-        resp = client.put("/v1/demo-client/gpt-4o-test/20250101T000001/uuid-002", json=body)
+        resp = client.put(_ingest_url(body), json=body)
         assert resp.status_code == 200
         assert resp.json()["status"] == "accepted"
 
     def test_evaluation_stored_in_db(self, portal_client, v1_encryptor):
         client, db_path = portal_client
         body = _make_ingest_body("evaluation", self._EVAL_DATA, v1_encryptor)
-        resp = client.put("/v1/demo-client/gpt-4o-test/20250101T000002/uuid-003", json=body)
+        resp = client.put(_ingest_url(body), json=body)
         record_id = resp.json()["record_id"]
 
         con = sqlite3.connect(db_path)
@@ -131,14 +137,14 @@ class TestTelemetryIngest:
     def test_telemetry_accepted(self, portal_client, v1_encryptor):
         client, _ = portal_client
         body = _make_ingest_body("telemetry", self._TELEMETRY_DATA, v1_encryptor)
-        resp = client.put("/v1/demo-client/gpt-4o-test/20250101T000003/uuid-004", json=body)
+        resp = client.put(_ingest_url(body), json=body)
         assert resp.status_code == 200
         assert resp.json()["status"] == "accepted"
 
     def test_telemetry_stored_in_db(self, portal_client, v1_encryptor):
         client, db_path = portal_client
         body = _make_ingest_body("telemetry", self._TELEMETRY_DATA, v1_encryptor)
-        resp = client.put("/v1/demo-client/gpt-4o-test/20250101T000004/uuid-005", json=body)
+        resp = client.put(_ingest_url(body), json=body)
         record_id = resp.json()["record_id"]
 
         con = sqlite3.connect(db_path)
@@ -163,13 +169,13 @@ class TestCalibrationIngest:
     def test_calibration_accepted(self, portal_client, v1_encryptor):
         client, _ = portal_client
         body = _make_ingest_body("calibration", self._CALIB_DATA, v1_encryptor)
-        resp = client.put("/v1/demo-client/gpt-4o-test/20250101T000005/uuid-006", json=body)
+        resp = client.put(_ingest_url(body), json=body)
         assert resp.status_code == 200
 
     def test_calibration_stored_in_db(self, portal_client, v1_encryptor):
         client, db_path = portal_client
         body = _make_ingest_body("calibration", self._CALIB_DATA, v1_encryptor)
-        resp = client.put("/v1/demo-client/gpt-4o-test/20250101T000006/uuid-007", json=body)
+        resp = client.put(_ingest_url(body), json=body)
         record_id = resp.json()["record_id"]
 
         con = sqlite3.connect(db_path)
@@ -188,7 +194,7 @@ class TestIngestErrors:
     def test_invalid_base64_returns_422(self, portal_client):
         client, _ = portal_client
         resp = client.put(
-            "/v1/demo-client/test/20250101T000000/uuid-err",
+            "/v1/test-client/m/v/error-test",
             json={
                 "model_name": "m", "model_version": "v", "model_environment": "e",
                 "model_purpose": "p", "log_generated_at": "2025-01-01T00:00:00+00:00",
@@ -211,13 +217,13 @@ class TestIngestErrors:
         enc = Encryptor(public_key=other_pub_pem)
         client, _ = portal_client
         body = _make_ingest_body("evaluation", {"prompt_id": "x"}, enc)
-        resp = client.put("/v1/demo-client/test/20250101T000000/uuid-wrongkey", json=body)
+        resp = client.put(_ingest_url(body), json=body)
         assert resp.status_code == 422
 
     def test_missing_log_type_returns_422(self, portal_client):
         client, _ = portal_client
         resp = client.put(
-            "/v1/demo-client/test/20250101T000000/uuid-notype",
+            "/v1/test-client/m/v/error-test",
             json={
                 "model_name": "m", "model_version": "v", "model_environment": "e",
                 "model_purpose": "p", "log_generated_at": "2025-01-01T00:00:00+00:00",

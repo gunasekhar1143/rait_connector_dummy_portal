@@ -1,0 +1,11 @@
+INFO:     Started server process [20396]
+INFO:     Waiting for application startup.
+INFO:mock_registry.main:Mock Registry started — 50 calibration prompts loaded
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8001 (Press CTRL+C to quit)
+INFO:mock_registry.routers.auth:Issued token for client_id=demo-client
+INFO:mock_registry.routers.auth:Issued token for client_id=demo-client
+INFO:mock_registry.routers.calibrator:Received 50 calibration responses
+INFO:mock_registry.routers.auth:Issued token for client_id=demo-client
+INFO:mock_registry.routers.auth:Issued token for client_id=demo-client
+INFO:mock_registry.routers.calibrator:Received 50 calibration responses

@@ -1,0 +1,317 @@
+{
+    "name": "ingest.decrypt",
+    "context": {
+        "trace_id": "0x20d3e565611a966d3c93e7f6170c3f05",
+        "span_id": "0xf7cc08b1216382d3",
+        "trace_state": "[]"
+    },
+    "kind": "SpanKind.INTERNAL",
+    "parent_id": "0x3ce5a9f2491d3c00",
+    "start_time": "2026-06-14T10:11:39.202711Z",
+    "end_time": "2026-06-14T10:11:39.219866Z",
+    "status": {
+        "status_code": "UNSET"
+    },
+    "attributes": {
+        "version": "v2",
+        "record_id": 2370
+    },
+    "events": [],
+    "links": [],
+    "resource": {
+        "attributes": {
+            "telemetry.sdk.language": "python",
+            "telemetry.sdk.name": "opentelemetry",
+            "telemetry.sdk.version": "1.42.1",
+            "service.name": "rait-dummy-portal"
+        },
+        "schema_url": ""
+    }
+}
+{
+    "name": "ingest.receive",
+    "context": {
+        "trace_id": "0x20d3e565611a966d3c93e7f6170c3f05",
+        "span_id": "0x3ce5a9f2491d3c00",
+        "trace_state": "[]"
+    },
+    "kind": "SpanKind.INTERNAL",
+    "parent_id": null,
+    "start_time": "2026-06-14T10:11:39.202636Z",
+    "end_time": "2026-06-14T10:11:39.220431Z",
+    "status": {
+        "status_code": "UNSET"
+    },
+    "attributes": {
+        "model_name": "gpt-4o-poc",
+        "log_type": "telemetry",
+        "key_suffix": "49155ce2-e3e5-4c9e-a884-d01daa98e7af"
+    },
+    "events": [],
+    "links": [],
+    "resource": {
+        "attributes": {
+            "telemetry.sdk.language": "python",
+            "telemetry.sdk.name": "opentelemetry",
+            "telemetry.sdk.version": "1.42.1",
+            "service.name": "rait-dummy-portal"
+        },
+        "schema_url": ""
+    }
+}
+INFO:     127.0.0.1:63237 - "PUT /v1/demo-client/gpt-4o-poc%202024-08-06%20%28development%29/20260614T101138/49155ce2-e3e5-4c9e-a884-d01daa98e7af HTTP/1.1" 200 OK
+{
+    "name": "ingest.decrypt",
+    "context": {
+        "trace_id": "0x363784919b897b8264bfd0a803025091",
+        "span_id": "0xd7d73c29025bde12",
+        "trace_state": "[]"
+    },
+    "kind": "SpanKind.INTERNAL",
+    "parent_id": "0xe99e77b592ede635",
+    "start_time": "2026-06-14T10:11:40.759968Z",
+    "end_time": "2026-06-14T10:11:40.769523Z",
+    "status": {
+        "status_code": "UNSET"
+    },
+    "attributes": {
+        "version": "v2",
+        "record_id": 2371
+    },
+    "events": [],
+    "links": [],
+    "resource": {
+        "attributes": {
+            "telemetry.sdk.language": "python",
+            "telemetry.sdk.name": "opentelemetry",
+            "telemetry.sdk.version": "1.42.1",
+            "service.name": "rait-dummy-portal"
+        },
+        "schema_url": ""
+    }
+}
+{
+    "name": "ingest.receive",
+    "context": {
+        "trace_id": "0x363784919b897b8264bfd0a803025091",
+        "span_id": "0xe99e77b592ede635",
+        "trace_state": "[]"
+    },
+    "kind": "SpanKind.INTERNAL",
+    "parent_id": null,
+    "start_time": "2026-06-14T10:11:40.759908Z",
+    "end_time": "2026-06-14T10:11:40.769909Z",
+    "status": {
+        "status_code": "UNSET"
+    },
+    "attributes": {
+        "model_name": "gpt-4o-poc",
+        "log_type": "calibration",
+        "key_suffix": "a569504b-e8da-40a1-947e-822fea1e542f"
+    },
+    "events": [],
+    "links": [],
+    "resource": {
+        "attributes": {
+            "telemetry.sdk.language": "python",
+            "telemetry.sdk.name": "opentelemetry",
+            "telemetry.sdk.version": "1.42.1",
+            "service.name": "rait-dummy-portal"
+        },
+        "schema_url": ""
+    }
+}
+INFO:     127.0.0.1:63246 - "PUT /v1/demo-client/gpt-4o-poc%202024-08-06%20%28development%29/20260614T101140/a569504b-e8da-40a1-947e-822fea1e542f HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63248 - "GET /health HTTP/1.1" 200 OK
+{
+    "name": "ingest.decrypt",
+    "context": {
+        "trace_id": "0x946e1b5dddc3b0f89ed611dae44f1ae3",
+        "span_id": "0xe4b0d21412e3fb19",
+        "trace_state": "[]"
+    },
+    "kind": "SpanKind.INTERNAL",
+    "parent_id": "0x818b9604bff5f80f",
+    "start_time": "2026-06-14T10:12:07.504484Z",
+    "end_time": "2026-06-14T10:12:07.513998Z",
+    "status": {
+        "status_code": "UNSET"
+    },
+    "attributes": {
+        "version": "v2",
+        "record_id": 2372
+    },
+    "events": [],
+    "links": [],
+    "resource": {
+        "attributes": {
+            "telemetry.sdk.language": "python",
+            "telemetry.sdk.name": "opentelemetry",
+            "telemetry.sdk.version": "1.42.1",
+            "service.name": "rait-dummy-portal"
+        },
+        "schema_url": ""
+    }
+}
+{
+    "name": "ingest.receive",
+    "context": {
+        "trace_id": "0x946e1b5dddc3b0f89ed611dae44f1ae3",
+        "span_id": "0x818b9604bff5f80f",
+        "trace_state": "[]"
+    },
+    "kind": "SpanKind.INTERNAL",
+    "parent_id": null,
+    "start_time": "2026-06-14T10:12:07.504419Z",
+    "end_time": "2026-06-14T10:12:07.514410Z",
+    "status": {
+        "status_code": "UNSET"
+    },
+    "attributes": {
+        "model_name": "gpt-4o-poc",
+        "log_type": "evaluation",
+        "key_suffix": "be0d52fa-aa47-4190-a156-65ed3bcd8d89"
+    },
+    "events": [],
+    "links": [],
+    "resource": {
+        "attributes": {
+            "telemetry.sdk.language": "python",
+            "telemetry.sdk.name": "opentelemetry",
+            "telemetry.sdk.version": "1.42.1",
+            "service.name": "rait-dummy-portal"
+        },
+        "schema_url": ""
+    }
+}
+INFO:     127.0.0.1:55008 - "PUT /v1/demo-client/gpt-4o-poc%202024-08-06%20%28development%29/20260614T101206/be0d52fa-aa47-4190-a156-65ed3bcd8d89 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55004 - "POST /api/evaluate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63612 - "GET /api/dimensions/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65085 - "GET /health HTTP/1.1" 200 OK
+{
+    "name": "ingest.decrypt",
+    "context": {
+        "trace_id": "0xa17a73c863386fd57f41ce872b8fd3bd",
+        "span_id": "0x649791a6d58ac3a6",
+        "trace_state": "[]"
+    },
+    "kind": "SpanKind.INTERNAL",
+    "parent_id": "0xfcd5f7817e6bf686",
+    "start_time": "2026-06-14T11:01:08.223957Z",
+    "end_time": "2026-06-14T11:01:08.243311Z",
+    "status": {
+        "status_code": "UNSET"
+    },
+    "attributes": {
+        "version": "v2",
+        "record_id": 2373
+    },
+    "events": [],
+    "links": [],
+    "resource": {
+        "attributes": {
+            "telemetry.sdk.language": "python",
+            "telemetry.sdk.name": "opentelemetry",
+            "telemetry.sdk.version": "1.42.1",
+            "service.name": "rait-dummy-portal"
+        },
+        "schema_url": ""
+    }
+}
+{
+    "name": "ingest.receive",
+    "context": {
+        "trace_id": "0xa17a73c863386fd57f41ce872b8fd3bd",
+        "span_id": "0xfcd5f7817e6bf686",
+        "trace_state": "[]"
+    },
+    "kind": "SpanKind.INTERNAL",
+    "parent_id": null,
+    "start_time": "2026-06-14T11:01:08.223722Z",
+    "end_time": "2026-06-14T11:01:08.244528Z",
+    "status": {
+        "status_code": "UNSET"
+    },
+    "attributes": {
+        "model_name": "gpt-4o-poc",
+        "log_type": "evaluation",
+        "key_suffix": "8eef27e5-a447-4b4f-89b0-88a5a393fae1"
+    },
+    "events": [],
+    "links": [],
+    "resource": {
+        "attributes": {
+            "telemetry.sdk.language": "python",
+            "telemetry.sdk.name": "opentelemetry",
+            "telemetry.sdk.version": "1.42.1",
+            "service.name": "rait-dummy-portal"
+        },
+        "schema_url": ""
+    }
+}
+INFO:     127.0.0.1:64006 - "PUT /v1/demo-client/gpt-4o-poc%202024-08-06%20%28development%29/20260614T110107/8eef27e5-a447-4b4f-89b0-88a5a393fae1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64002 - "POST /api/evaluate HTTP/1.1" 200 OK
+{
+    "name": "ingest.decrypt",
+    "context": {
+        "trace_id": "0x855c5eaa58ee50c14acf8b85ae25e3f4",
+        "span_id": "0x83fb116287ea33ad",
+        "trace_state": "[]"
+    },
+    "kind": "SpanKind.INTERNAL",
+    "parent_id": "0x2fe27dc11061f5c8",
+    "start_time": "2026-06-14T11:01:37.162076Z",
+    "end_time": "2026-06-14T11:01:37.180042Z",
+    "status": {
+        "status_code": "UNSET"
+    },
+    "attributes": {
+        "version": "v2",
+        "record_id": 2374
+    },
+    "events": [],
+    "links": [],
+    "resource": {
+        "attributes": {
+            "telemetry.sdk.language": "python",
+            "telemetry.sdk.name": "opentelemetry",
+            "telemetry.sdk.version": "1.42.1",
+            "service.name": "rait-dummy-portal"
+        },
+        "schema_url": ""
+    }
+}
+{
+    "name": "ingest.receive",
+    "context": {
+        "trace_id": "0x855c5eaa58ee50c14acf8b85ae25e3f4",
+        "span_id": "0x2fe27dc11061f5c8",
+        "trace_state": "[]"
+    },
+    "kind": "SpanKind.INTERNAL",
+    "parent_id": null,
+    "start_time": "2026-06-14T11:01:37.161925Z",
+    "end_time": "2026-06-14T11:01:37.180404Z",
+    "status": {
+        "status_code": "UNSET"
+    },
+    "attributes": {
+        "model_name": "gpt-4o-poc",
+        "log_type": "evaluation",
+        "key_suffix": "23196648-0285-46b3-87ad-4a2deff3d39d"
+    },
+    "events": [],
+    "links": [],
+    "resource": {
+        "attributes": {
+            "telemetry.sdk.language": "python",
+            "telemetry.sdk.name": "opentelemetry",
+            "telemetry.sdk.version": "1.42.1",
+            "service.name": "rait-dummy-portal"
+        },
+        "schema_url": ""
+    }
+}
+INFO:     127.0.0.1:64012 - "PUT /v1/demo-client/gpt-4o-poc%202024-08-06%20%28development%29/20260614T110136/23196648-0285-46b3-87ad-4a2deff3d39d HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64008 - "POST /api/generate-and-evaluate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64015 - "GET /api/dimensions/summary HTTP/1.1" 200 OK

@@ -19,9 +19,11 @@ logger = logging.getLogger(__name__)
 def _extract_score(metric_metadata: dict[str, Any]) -> float | None:
     """Extract a single float score from metric_metadata.
 
-    Azure AI evaluators return dicts like {"coherence": 4.2, "coherence_reason": "..."}.
     Stub evaluator returns {"score": 4.2}.
-    We try "score" first, then take the first numeric value found.
+    Azure AI evaluators return {"coherence_score": 4.2, "coherence_reason": "..."}.
+    We try "score" first, then any key ending in "_score".
+    We never fall through to arbitrary numeric values to avoid picking up
+    count/flag fields (e.g. code_vulnerability_score=0 alongside other ints).
     """
     if not metric_metadata:
         return None
@@ -29,8 +31,8 @@ def _extract_score(metric_metadata: dict[str, Any]) -> float | None:
         v = metric_metadata["score"]
         if isinstance(v, (int, float)):
             return float(v)
-    for v in metric_metadata.values():
-        if isinstance(v, (int, float)):
+    for k, v in metric_metadata.items():
+        if k.endswith("_score") and isinstance(v, (int, float)):
             return float(v)
     return None
 
@@ -52,14 +54,16 @@ class AggregationService:
                 "strategy": row["aggregation_strategy"],
                 "threshold": row["safety_threshold"],
                 "weights": {},
+                "invert_scores": {},  # metric_name → bool; True = higher raw score is WORSE
             }
         weight_rows = await self._db.execute_fetchall(
-            "SELECT dimension_id, metric_name, weight FROM metric_weights"
+            "SELECT dimension_id, metric_name, weight, invert_score FROM metric_weights"
         )
         for row in weight_rows:
             did = row["dimension_id"]
             if did in strategies:
                 strategies[did]["weights"][row["metric_name"]] = row["weight"]
+                strategies[did]["invert_scores"][row["metric_name"]] = bool(row["invert_score"])
         return strategies
 
     def _apply_strategy(
@@ -68,8 +72,16 @@ class AggregationService:
         threshold: float,
         weights: dict[str, float],
         metric_scores: dict[str, list[float]],
+        lower_is_better: bool = False,
     ) -> tuple[float, float, float, bool]:
-        """Returns (avg_score, min_score, max_score, is_safe)."""
+        """Returns (avg_score, min_score, max_score, is_safe).
+
+        lower_is_better=True  → raw Azure score where higher means more harmful
+                                (e.g. Hate & Unfairness 0-7).
+                                is_safe = avg_score <= threshold.
+        lower_is_better=False → conventional scale where higher means safer.
+                                is_safe = avg_score >= threshold.
+        """
         all_scores: list[float] = []
         for scores in metric_scores.values():
             all_scores.extend(scores)
@@ -93,7 +105,8 @@ class AggregationService:
 
         min_score = min(all_scores)
         max_score = max(all_scores)
-        return score, min_score, max_score, score >= threshold
+        is_safe = (score <= threshold) if lower_is_better else (score >= threshold)
+        return score, min_score, max_score, is_safe
 
     async def compute_summary(
         self,
@@ -121,10 +134,14 @@ class AggregationService:
                 did = dim.get("dimension_id")
                 if did not in dim_metric_scores:
                     continue
+                invert_cfg = strategies[did]["invert_scores"]
                 for metric in dim.get("dimension_metrics", []):
                     mname = metric.get("metric_name", "")
                     score = _extract_score(metric.get("metric_metadata") or {})
                     if score is not None:
+                        # Raw score stored as-is — no value inversion.
+                        # invert_score flag (lower_is_better) only affects the
+                        # is_safe comparison direction in _apply_strategy().
                         dim_metric_scores[did].setdefault(mname, []).append(score)
 
         results: list[DimensionScore] = []
@@ -145,8 +162,12 @@ class AggregationService:
                 ))
                 continue
 
+            # A dimension is lower_is_better when ANY of its metrics has invert_score=1.
+            # (In practice each dimension has a single dominant scale direction.)
+            lower_is_better = any(cfg["invert_scores"].values())
             avg, mn, mx, is_safe = self._apply_strategy(
-                cfg["strategy"], cfg["threshold"], cfg["weights"], metric_scores
+                cfg["strategy"], cfg["threshold"], cfg["weights"], metric_scores,
+                lower_is_better=lower_is_better,
             )
             # sample_count = number of evaluation records that contributed scores
             total_samples = max(len(v) for v in metric_scores.values())

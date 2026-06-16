@@ -2,6 +2,7 @@
 import base64
 import json
 import sys
+import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -89,7 +90,7 @@ def seeded_client(tmp_path_factory, rsa_key_pair):
         for i in range(5):
             score = 0.6 + i * 0.05  # 0.60, 0.65, 0.70, 0.75, 0.80
             body = _make_eval_payload(enc, f"seed-prompt-{i:03d}", score)
-            resp = client.put(f"/v1/demo-client/gpt-4o-test/20250101T0000{i:02d}/uuid-seed-{i}", json=body)
+            resp = client.put(f"/v1/test-client/gpt-4o-test/2024-08-06/{uuid.uuid4()}", json=body)
             assert resp.status_code == 200, f"Seed {i} failed: {resp.text}"
 
         yield client
@@ -213,8 +214,10 @@ class TestSchedulerStatus:
         get_resp = seeded_client.get("/api/scheduler/status")
         assert get_resp.status_code == 200
         data = get_resp.json()
-        assert len(data) == 1
-        assert data[0]["id"] == "job-1"
+        # Phase 2: GET /api/scheduler/status now returns a dict with legacy_jobs key
+        legacy_jobs = data["legacy_jobs"]
+        assert len(legacy_jobs) == 1
+        assert legacy_jobs[0]["id"] == "job-1"
 
 
 # ── GET /health with records ──────────────────────────────────────────────────

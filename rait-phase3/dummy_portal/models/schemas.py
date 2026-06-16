@@ -23,6 +23,7 @@ class RecordSummary(BaseModel):
     model_name: str
     model_version: str
     model_environment: str
+    model_purpose: str = ""
     log_type: str
     log_generated_at: str
     received_at: str
